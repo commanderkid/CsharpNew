@@ -1,0 +1,75 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp22
+{
+    class Program
+    {
+        public static void Main()
+        {
+            //TestOnSize(1);
+            //TestOnSize(2);
+            //TestOnSize(0);
+            //TestOnSize(3);
+            //TestOnSize(4);
+        }
+
+        static void TestOnSize(int size)
+        {
+            var result = new List<int[]>();
+            MakePermutations(new int[size], 0, result);
+            foreach (var permutation in result)
+                WritePermutation(permutation);
+        }
+
+        static void WritePermutation(int[] permutation)
+        {
+            var strings = new List<string>();
+            foreach (var i in permutation)
+                strings.Add(i.ToString());
+            Console.WriteLine(string.Join(" ", strings.ToArray()));
+        }
+
+        static void MakePermutations(int[] permutation, int position, List<int[]> result)
+        {
+            if (result.Count == 0) {
+                for (int i = 0; i < permutation.Length; i++) { permutation[i] = i; }
+                result.Add(permutation.ToArray());
+                int newPos = position;// + 1;
+                MakePermutations(permutation.ToArray(), newPos, result);
+            }
+            if (position >= permutation.Length) return;
+            for(int i = position; i < permutation.Length - 1; i++)
+            {
+                int addpos = position + 1;
+                MakePermutations(permutation.ToArray(), addpos, result);
+                permutation = ArrayMover(permutation, position, i);
+                int[] newTempArray = permutation.ToArray();
+                IsElementInArray(newTempArray, result);
+                int yetNewPosition = position + 1;
+                MakePermutations(newTempArray, yetNewPosition, result);
+            }
+            int newPosition = position + 1;
+        }
+
+        static int[] ArrayMover(int[] inputArray, int position, int i)
+        {
+            int[] newArray = new int[inputArray.Length];
+            Array.Copy(inputArray, newArray, inputArray.Length);
+            int tempVar = inputArray[i + 1];
+            newArray[i + 1] = newArray[position];
+            newArray[position] = tempVar;
+            return newArray;
+        }
+
+        static void IsElementInArray(int[] pretendentForAdding, List<int[]> res)
+        {
+            foreach(int[] el in res)
+                if(el.SequenceEqual(pretendentForAdding)) { return; };
+            res.Add(pretendentForAdding);
+        }
+    }
+}
